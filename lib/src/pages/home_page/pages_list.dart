@@ -5,6 +5,7 @@ class PagesList extends StatelessWidget {
     {
       "name": "Basic view",
       "route": "basic",
+      "params": {"placeId": 1},
       "icon": Icons.crop_square,
       "color": Colors.blueGrey[50]
     },
@@ -46,7 +47,7 @@ class PagesList extends StatelessWidget {
         style: TextStyle(color: item["color"]),
       ),
       onTap: () {
-        Navigator.pushNamed(context, item["route"]);
+        Navigator.pushNamed(context, item["route"], arguments: item["params"]);
       },
     );
   }

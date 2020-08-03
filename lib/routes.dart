@@ -7,7 +7,7 @@ import 'package:flutter_basics/src/pages/scroll_page.dart';
 Map<String, WidgetBuilder> getAppRoutes() {
   return <String, WidgetBuilder>{
     "home": (BuildContext context) => HomePage(),
-    "basic": (BuildContext context) => BasicPage(pageTitle: "Basic Page"),
+    "basic": (BuildContext context) => BasicPage(),
     "scroll": (BuildContext context) => ScrollPage(pageTitle: "Basic Page"),
   };
 }

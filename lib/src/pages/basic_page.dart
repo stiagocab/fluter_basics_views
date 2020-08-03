@@ -1,44 +1,72 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_basics/src/models/place_model.dart';
+import 'package:flutter_basics/src/providers/places_provider.dart';
 
-// ignore: must_be_immutable
-class BasicPage extends StatelessWidget {
-  String pageTitle;
-  final List images = [
-    "https://www.alcaldesdemexico.com/wp-content/uploads/2014/07/Baja-California-Minuta-Loca-Agosto-2013-1024x750.jpg",
-    "https://www.reflectresorts.com/content/dam/amr/photography/reflect/rkglc/RKGLC-EXT-Aerial-1A-RGB.jpg",
-    "https://www.alcaldesdemexico.com/wp-content/uploads/2014/07/Baja-California-Minuta-Loca-Agosto-2013-1024x750.jpg",
-    "https://www.reflectresorts.com/content/dam/amr/photography/reflect/rkglc/RKGLC-EXT-Aerial-1A-RGB.jpg",
-    "https://assets.simpleviewinc.com/simpleview/image/upload/c_limit,h_1200,q_75,w_1200/v1/clients/loscabosmx/Arco_I9A0109_V2_0bb6b65a-6293-4918-a9dd-6e82822e1299.jpg",
-    "https://www.reflectresorts.com/content/dam/amr/photography/reflect/rkglc/RKGLC-EXT-Aerial-1A-RGB.jpg",
-  ];
+class BasicPage extends StatefulWidget {
+  BasicPage({Key key}) : super(key: key);
 
-  BasicPage({Key key, this.pageTitle = "HI"});
+  @override
+  _BasicPageState createState() => _BasicPageState();
+}
+
+class _BasicPageState extends State<BasicPage> {
+  Place placeData;
+  final placesProvider = PlacesProvider();
+
+  Future loadData(placeId) async {
+    final data = placesProvider
+        .getPlaceById(placeId); // load your data from SharedPreferences
+    return data;
+  }
+
+  _chargeData(arguments) {
+    loadData(arguments["placeId"]).then((data) {
+      setState(() {
+        placeData = data;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final dynamic arguments = ModalRoute.of(context).settings.arguments;
+    _chargeData(arguments);
+    if (placeData == null) {
+      return CircularProgressIndicator();
+    }
     return Scaffold(
       backgroundColor: Colors.grey[900],
       body: Stack(
+        // children: <Widget>[Text("ELEMENTO")],
         children: <Widget>[
           _buildHead(),
-          _renderInfo(context),
+          _renderInfo(context, arguments["placeId"]),
         ],
       ),
     );
   }
 
-  Widget _renderInfo(context) {
-    // Dummy text Description
-    final String description =
-        "Cabo San Lucas es un balneario en el extremo sur de la península de Baja California en México, conocido por sus playas, actividades acuáticas y vida nocturna. La Playa El Médano es la principal del Cabo, con restaurantes al aire libre y numerosos bares. Después de la marina, se encuentra el promontorio del Fin de la Tierra, donde está la Playa del Amor y El Arco, una arcada natural en los riscos marinos.";
+  Widget _buildHead() {
+    return Stack(
+      children: <Widget>[
+        FadeInImage(
+          height: 280.0,
+          width: double.infinity,
+          placeholder: AssetImage("assets/img/grey.png"),
+          image: NetworkImage(placeData.images[0]),
+          fit: BoxFit.cover,
+        ),
+      ],
+    );
+  }
 
-    final double rate = 5.0;
-
+  Widget _renderInfo(context, int placeId) {
     return ListView(
       children: <Widget>[
         Container(
           color: Colors.grey[900],
-          padding: EdgeInsets.only(left: 20.0, top: 20.0, right: 20.0, bottom: 50.0),
+          padding:
+              EdgeInsets.only(left: 20.0, top: 20.0, right: 20.0, bottom: 50.0),
           margin: EdgeInsets.only(top: 250.0),
           child: Column(
             children: <Widget>[
@@ -56,7 +84,7 @@ class BasicPage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                          "LOS CABOS",
+                          placeData.name,
                           style: TextStyle(
                               fontSize: 21.0, fontWeight: FontWeight.bold),
                         ),
@@ -68,7 +96,7 @@ class BasicPage extends StatelessWidget {
                     ),
                   ),
                   Icon(Icons.star),
-                  Text(rate.toString())
+                  Text(placeData.rate.toString())
                 ],
               ),
               SizedBox(height: 20.0),
@@ -76,11 +104,12 @@ class BasicPage extends StatelessWidget {
               Container(
                 margin: EdgeInsets.only(top: 20.0),
                 child: Text(
-                  description,
+                  placeData.description,
                   style: TextStyle(fontSize: 16.0),
                 ),
               ),
-              _renderImages(context)
+              _renderImages(context),
+              PlacesSlide(placeId),
             ],
           ),
         ),
@@ -135,39 +164,15 @@ class BasicPage extends StatelessWidget {
     );
   }
 
-  Widget _buildHead() {
-    return Stack(
-      children: <Widget>[
-        FadeInImage(
-          height: 280.0,
-          width: double.infinity,
-          placeholder: AssetImage("assets/img/grey.png"),
-          image: NetworkImage(
-            "https://images.unsplash.com/photo-1588801092859-418d909759ad?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1502&q=80",
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _renderImages(BuildContext context) {
     final media = MediaQuery.of(context).size;
     final List<Widget> imagesList = List();
 
-    images.forEach((element) {
+    placeData.images.forEach((element) {
       imagesList.add(
         FadeInImage(
           width: media.width * 0.3,
-          placeholder: AssetImage("assets/img/grey.png"),
-          image: NetworkImage(element),
-          fit: BoxFit.cover,
-        ),
-      );
-    });
-    images.forEach((element) {
-      imagesList.add(
-        FadeInImage(
-          width: media.width * 0.3,
+          height: 100.0,
           placeholder: AssetImage("assets/img/grey.png"),
           image: NetworkImage(element),
           fit: BoxFit.cover,
@@ -179,6 +184,90 @@ class BasicPage extends StatelessWidget {
       margin: EdgeInsets.only(top: 20.0),
       child: Wrap(
         children: imagesList,
+      ),
+    );
+  }
+}
+
+// ignore: must_be_immutable
+class PlacesSlide extends StatelessWidget {
+  int idPlace;
+  final placesProvider = PlacesProvider();
+
+  PlacesSlide(this.idPlace);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(top: 30.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            "Otros lugares:",
+            style: TextStyle(fontSize: 20.0),
+          ),
+          SizedBox(
+            height: 20.0,
+          ),
+          Container(
+            height: 250.0,
+            width: double.infinity,
+            child: FutureBuilder(
+              future: placesProvider.getFiltered(idPlace),
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.hasData) {
+                  return PageView.builder(
+                    itemCount: snapshot.data.length,
+                    controller:
+                        PageController(initialPage: 1, viewportFraction: 0.6),
+                    itemBuilder: (context, i) {
+                      if (snapshot.hasData) {
+                        return _cardPlace(snapshot.data[i], context);
+                      }
+                      return Center();
+                    },
+                  );
+                }
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _cardPlace(Place place, BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(context, "basic", arguments: {"placeId": place.id});
+      },
+      child: Stack(
+        children: <Widget>[
+          Padding(
+            // image movie
+            padding: EdgeInsets.symmetric(horizontal: 5.0),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10.0),
+              child: FadeInImage(
+                height: 200,
+                fit: BoxFit.cover,
+                image: NetworkImage(place.images[0]),
+                placeholder: AssetImage("assets/img/grey.png"),
+              ),
+            ),
+          ),
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.all(10.0),
+            margin: EdgeInsets.only(top: 160.0),
+            color: Colors.black26,
+            child: Text(place.name),
+          )
+        ],
       ),
     );
   }
