@@ -262,9 +262,9 @@ class PlacesSlide extends StatelessWidget {
           ),
           Container(
             width: double.infinity,
-            padding: EdgeInsets.all(10.0),
+            padding: EdgeInsets.only(top: 10.0, left: 10.0, bottom: 20.0),
             margin: EdgeInsets.only(top: 160.0),
-            color: Colors.black26,
+            color: Colors.black45,
             child: Text(place.name),
           )
         ],

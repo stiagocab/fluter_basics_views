@@ -10,16 +10,16 @@ class PagesList extends StatelessWidget {
       "color": Colors.blueGrey[50]
     },
     {
-      "name": "Scroll view",
-      "route": "scroll",
-      "icon": Icons.file_download,
-      "color": Colors.blueAccent
-    },
-    {
       "name": "Awesome menu",
       "route": "menu",
       "icon": Icons.list,
       "color": Colors.amber
+    },
+    {
+      "name": "Scroll view",
+      "route": "scroll",
+      "icon": Icons.file_download,
+      "color": Colors.blueAccent
     },
     {
       "name": "Error page",
