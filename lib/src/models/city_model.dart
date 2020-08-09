@@ -27,21 +27,21 @@ class CityWeather {
 
   CityWeather.fromJson(Map<String, dynamic> json) {
     final main = json["main"];
-    final weather = json["weather"];
+    final weather = json["weather"][0];
     final wind = json["wind"];
     final coords = json["coord"];
 
-    temp = main["temp"] / 1;
-    tempMin = main["temp_min"] / 1;
-    tempMax = main["temp_max"] / 1;
+    temp = double.parse((main["temp"] - 273.15).toStringAsFixed(1));
+    tempMin = double.parse((main["temp_min"] - 273.15).toStringAsFixed(1));
+    tempMax = double.parse((main["temp_max"] - 273.15).toStringAsFixed(1));
     humidity = main["humidity"];
     pressure = main["pressure"];
     description = weather["description"];
     icon = weather["icon"];
-    windSpeed = wind["speed"];
+    windSpeed = wind["speed"] / 1;
     city = json["name"];
     country = json["sys"]["country"];
-    coord = Coords(latitude: coords["lat"], longitude: coords["lon"]);
+    coord = Coords(latitude: coords["lat"] / 1, longitude: coords["lon"] / 1);
   }
 
   getIcon() {

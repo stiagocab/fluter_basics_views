@@ -9,10 +9,10 @@ class ScrollPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.purple[800],
+      // backgroundColor: Colors.purple[800],
       appBar: AppBar(
-        backgroundColor: Colors.purple[700],
-        title: Text("Climate of cities: México"),
+        // backgroundColor: Colors.purple[700],
+        title: Text("Weather: México"),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -31,7 +31,7 @@ class ScrollPage extends StatelessWidget {
         image: DecorationImage(
           image: AssetImage("assets/cities/${city["img"]}.jpg"),
           fit: BoxFit.cover,
-          colorFilter: ColorFilter.mode(Colors.white38, BlendMode.lighten),
+          colorFilter: ColorFilter.mode(Colors.black45, BlendMode.lighten),
         ),
         borderRadius: BorderRadiusDirectional.only(
           bottomEnd: Radius.circular(20.0),
@@ -43,7 +43,7 @@ class ScrollPage extends StatelessWidget {
           Text(
             city["name"],
             style: TextStyle(
-              color: Colors.purple[700],
+              color: Colors.white,
               fontSize: 25.0,
               fontWeight: FontWeight.bold,
               letterSpacing: 2.0,
@@ -57,7 +57,7 @@ class ScrollPage extends StatelessWidget {
       onTap: () {
         Navigator.pushNamed(context, "weather_city", arguments: city);
       },
-      child: cityTile,
+      child: Hero(tag: city["query"], child: cityTile),
     );
   }
 
